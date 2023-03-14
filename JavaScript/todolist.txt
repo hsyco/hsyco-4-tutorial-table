@@ -1,0 +1,116 @@
+
+INIT : {
+    var tableData = [];
+    var sessionList = [];
+    
+    var toDoListString = varGet("$TODOLISTDATA!");
+    if(toDoListString != null && toDoListString !== ""){
+        var dataSplit = toDoListString.split("],");
+        dataSplit.forEach( function(element) {
+            var lines = element.replace("[", "").replace("]", "").trim();
+            tableData.push("[" + lines + "]");
+        } );
+    }
+    
+    var sessionListString = varGet("$SESSIONLIST!");
+    if(sessionListString != null && sessionListString !== "" ){
+        var sessionSplit = sessionListString.split("],");
+        sessionSplit.forEach( function(element) {
+            var lines2 = element.replace("[", "").replace("]", "").trim();
+            sessionList.push("[" + lines2 + "]");
+        } );
+    }
+}
+
+function userCommand(session, userid, name, param) : {
+    if(name === "todolist.table"){
+        try{
+            var jsonString = param;
+            var obj = JSON.parse(jsonString);
+            var action = obj.action;
+            
+            if(action === "insert"){
+                var objData = obj.data;
+    			var time = objData["0"];
+    			var date = objData["1"];
+    			var textToDo = objData["2"];
+    			var packet = "[\"" + time + "\",\"" + date + "\",\"" + textToDo + "\"]";
+    			
+    			tableData.push(packet);
+    			
+    			uiSessionSet(session, "todolist.table", "items", "[" + tableData.toString() + "]");
+    			varSet("$TODOLISTDATA!", tableData.toString());
+    			
+            }else if(action === "update"){
+                var objData = obj.data;
+    			var time = objData["0"];
+    			var date = objData["1"];
+    			var textToDo = objData["2"];
+    			var key = obj.key;
+    			var packet = "[\"" + time + "\",\"" + date + "\",\"" + textToDo + "\"]";
+    			
+    			tableData.splice(key, 1);               //remove 1 element at 'key' position
+    			tableData.splice(key, 0, packet);       //insert element 'packet' at 'key' position removing 0 elements
+    			
+    			uiSessionSet(session, "todolist.table", "items", "[" + tableData.toString() + "]");
+    			varSet("$TODOLISTDATA!", tableData.toString());
+    				
+            }else if(action === "delete"){
+                var key = obj.key;
+    			tableData.splice(key, 1);
+    			
+    			uiSessionSet(session, "todolist.table", "items", "[" + tableData.toString() + "]");
+    			varSet("$TODOLISTDATA!", tableData.toString());
+                
+            }else if(action === "move"){
+                var key = obj.key;
+    			var packet = tableData[key];
+    			tableData.splice(key, 1);
+    
+    			var before = "";
+    			var after = "";
+    			try {
+    				before = obj.before;
+    			} catch(error) { }
+    			try {
+    				after = obj.after;
+    			} catch(error) { }
+    			
+    			if (before.length() != 0) {
+    				tableData.splice(before, 0, packet);
+    			} else {
+    				tableData.splice(after, 0, packet);
+    			}
+    			
+    			uiSessionSet(session, "todolist.table", "items", "[" + tableData.toString() + "]");
+    			varSet("$TODOLISTDATA!", tableData.toString());
+            }
+        
+        } catch(error){
+            errorLog("ToDoList Table Error: " + error);
+        }
+    }
+    
+    return "";
+}
+
+function pageEvent(address, session, userid, project, page) : {
+    if(project === "todolist" && page === "page2"){
+        sessionList.push("[" + session + "]");
+        uiSessionSet(session, "todolist.table", "items", "[" + tableData.toString() + "]");
+		varSet("$TODOLISTDATA!", tableData.toString());
+		varSet("$SESSIONLIST!", sessionList.toString());
+    }else{
+        sessionList.splice(sessionList.indexOf(session), 1); 
+        varSet("$SESSIONLIST!", sessionList.toString());
+    }
+}
+
+function logoutEvent(address, session, userid, lock) : {
+    sessionList.splice(sessionList.indexOf(session), 1); 
+    varSet("$SESSIONLIST!", sessionList.toString());
+}
+
+
+
+

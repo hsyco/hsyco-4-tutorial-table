@@ -3,7 +3,7 @@ INIT : {
     var tableData = [];
     var sessionList = [];
     
-    var toDoListString = varGet("$TODOLISTDATA!");
+    var toDoListString = varGet("$TODOLISTTABLEDATA!");
     if(toDoListString != null && toDoListString !== ""){
         var dataSplit = toDoListString.split("],");
         dataSplit.forEach( function(element) {
@@ -22,8 +22,12 @@ INIT : {
     }
 }
 
+TIME = 0000 : {
+    sessionList = [];
+}
+
 function userCommand(session, userid, name, param) : {
-    if(name === "todolist.table"){
+    if(name === "todolisttable"){
         try{
             var jsonString = param;
             var obj = JSON.parse(jsonString);
@@ -38,8 +42,10 @@ function userCommand(session, userid, name, param) : {
     			
     			tableData.push(packet);
     			
-    			uiSessionSet(session, "todolist.table", "items", "[" + tableData.toString() + "]");
-    			varSet("$TODOLISTDATA!", tableData.toString());
+    			uiSessionSet(session, "todolisttable", "items", "[" + tableData.toString() + "]");
+    			varSet("$TODOLISTTABLEDATA!", tableData.toString());
+    			
+    			return "ok";
     			
             }else if(action === "update"){
                 var objData = obj.data;
@@ -52,15 +58,19 @@ function userCommand(session, userid, name, param) : {
     			tableData.splice(key, 1);               //remove 1 element at 'key' position
     			tableData.splice(key, 0, packet);       //insert element 'packet' at 'key' position removing 0 elements
     			
-    			uiSessionSet(session, "todolist.table", "items", "[" + tableData.toString() + "]");
-    			varSet("$TODOLISTDATA!", tableData.toString());
+    			uiSessionSet(session, "todolisttable", "items", "[" + tableData.toString() + "]");
+    			varSet("$TODOLISTTABLEDATA!", tableData.toString());
+    			
+    			return "ok";
     				
             }else if(action === "delete"){
                 var key = obj.key;
     			tableData.splice(key, 1);
     			
-    			uiSessionSet(session, "todolist.table", "items", "[" + tableData.toString() + "]");
-    			varSet("$TODOLISTDATA!", tableData.toString());
+    			uiSessionSet(session, "todolisttable", "items", "[" + tableData.toString() + "]");
+    			varSet("$TODOLISTTABLEDATA!", tableData.toString());
+    			
+    			return "ok";
                 
             }else if(action === "move"){
                 var key = obj.key;
@@ -82,33 +92,47 @@ function userCommand(session, userid, name, param) : {
     				tableData.splice(after, 0, packet);
     			}
     			
-    			uiSessionSet(session, "todolist.table", "items", "[" + tableData.toString() + "]");
-    			varSet("$TODOLISTDATA!", tableData.toString());
+    			uiSessionSet(session, "todolisttable", "items", "[" + tableData.toString() + "]");
+    			varSet("$TODOLISTTABLEDATA!", tableData.toString());
+    			
+    			return "ok";
             }
         
-        } catch(error){
-            errorLog("ToDoList Table Error: " + error);
+        } catch(exception){
+            messageLog("PLUGIN - todolisttable - exception in userCommand " + exception);
         }
     }
     
-    return "";
+    return null;
 }
 
 function pageEvent(address, session, userid, project, page) : {
     if(project === "todolist" && page === "page2"){
         sessionList.push("[" + session + "]");
-        uiSessionSet(session, "todolist.table", "items", "[" + tableData.toString() + "]");
-		varSet("$TODOLISTDATA!", tableData.toString());
+        uiSessionSet(session, "todolisttable", "items", "[" + tableData.toString() + "]");
+		varSet("$TODOLISTTABLEDATA!", tableData.toString());
 		varSet("$SESSIONLIST!", sessionList.toString());
     }else{
-        sessionList.splice(sessionList.indexOf(session), 1); 
-        varSet("$SESSIONLIST!", sessionList.toString());
+        try{
+            if(sessionList.indexOf("[" + session + "]") != -1){
+                sessionList.splice(sessionList.indexOf("[" + session + "]"), 1);
+                varSet("$SESSIONLIST!", sessionList.toString());
+            }
+        }catch(exception){
+            messageLog("PLUGIN - todolisttable - exception in pageEvent " + exception);
+        }
     }
 }
 
 function logoutEvent(address, session, userid, lock) : {
-    sessionList.splice(sessionList.indexOf(session), 1); 
-    varSet("$SESSIONLIST!", sessionList.toString());
+    try{
+        if(sessionList.indexOf("[" + session + "]") != -1){
+            sessionList.splice(sessionList.indexOf("[" + session + "]"), 1);
+            varSet("$SESSIONLIST!", sessionList.toString());
+        }
+    }catch(exception){
+        messageLog("PLUGIN - todolisttable - exception in logoutEvent " + exception);
+    }
 }
 
 

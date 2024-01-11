@@ -1,0 +1,9 @@
+<project title="Todolistdatasource" language="en" width="640" height="480" skin="charcoal" version="4.0.0.13b" >
+	<page id="home" title="Homepage" pe-collapsed="false">
+		<table pos="x10y10" width="620" height="400" datamode="datasource" datasourceid="db_todolist"
+			 columns="[{&quot;dataname&quot;:&quot;id&quot;,&quot;fieldtype&quot;:&quot;none&quot;,&quot;hidden&quot;:&quot;true&quot;,&quot;import&quot;:&quot;false&quot;},{&quot;dataname&quot;:&quot;data&quot;,&quot;format&quot;:&quot;date&quot;,&quot;label&quot;:&quot;YYYY-MM-DD&quot;},{&quot;dataname&quot;:&quot;ora&quot;,&quot;format&quot;:&quot;time&quot;,&quot;label&quot;:&quot;HH:MM:SS&quot;},{&quot;dataname&quot;:&quot;info&quot;,&quot;label&quot;:&quot;To Do&quot;,&quot;maxlength&quot;:256}]"
+			 editmode="true" />
+		<button pos="x270y420" width="100" height="40" style="gr" label="Clear Table" icon="icon:cancel" action="command"
+			 name="cleardb" parameter="clear" />
+	</page>
+</project>

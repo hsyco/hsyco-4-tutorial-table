@@ -1,0 +1,129 @@
+
+INIT : {
+    var tableData = [];
+    var sessionList = [];
+    
+    var toDoListString = varGet("$TODOLISTTABLEDATA!");
+    if(toDoListString != null && toDoListString != "" && toDoListString != "[]"){
+        var dataSplit = toDoListString.split("],");
+        dataSplit.forEach( function(element) {
+            var lines = element.replace("[", "").replace("]", "").trim();
+            tableData.push("[" + lines + "]");
+        } );
+    }
+}
+
+#clear sessionList at every midnight
+TIME = 0000 : {
+    sessionList.length = 0;
+}
+
+function userCommand(session, userid, name, param) : {
+    if(name == "todolisttable"){
+        try{
+            var jsonString = param;
+            var obj = JSON.parse(jsonString);
+            var action = obj.action;
+            
+            if(action === "insert"){
+                var objData = obj.data;
+    			var time = objData["0"];
+    			var date = objData["1"];
+    			var textToDo = objData["2"];
+    			var packet = "[\"" + time + "\",\"" + date + "\",\"" + textToDo + "\"]";
+    			
+    			tableData.push(packet);
+    			
+    			uiSessionSet(session, "todolisttable", "items", "[" + tableData.toString() + "]");
+    			varSet("$TODOLISTTABLEDATA!", tableData.toString());
+    			
+    			return "ok";
+    			
+            }else if(action === "update"){
+                var objData = obj.data;
+    			var time = objData["0"];
+    			var date = objData["1"];
+    			var textToDo = objData["2"];
+    			var key = obj.key;
+    			var packet = "[\"" + time + "\",\"" + date + "\",\"" + textToDo + "\"]";
+    			
+    			tableData.splice(key, 1);               //remove 1 element at 'key' position
+    			tableData.splice(key, 0, packet);       //insert element 'packet' at 'key' position removing 0 elements
+    			
+    			uiSessionSet(session, "todolisttable", "items", "[" + tableData.toString() + "]");
+    			varSet("$TODOLISTTABLEDATA!", tableData.toString());
+    			
+    			return "ok";
+    				
+            }else if(action === "delete"){
+                var key = obj.key;
+    			tableData.splice(key, 1);
+    			
+    			uiSessionSet(session, "todolisttable", "items", "[" + tableData.toString() + "]");
+    			varSet("$TODOLISTTABLEDATA!", tableData.toString());
+    			
+    			return "ok";
+                
+            }else if(action === "move"){
+                var key = obj.key;
+    			var packet = tableData[key];
+    			tableData.splice(key, 1);
+    
+    			var before = "";
+    			var after = "";
+    			try {
+    				before = obj.before;
+    			} catch(error) { }
+    			try {
+    				after = obj.after;
+    			} catch(error) { }
+    			
+    			if (before.length() != 0) {
+    				tableData.splice(before, 0, packet);
+    			} else {
+    				tableData.splice(after, 0, packet);
+    			}
+    			
+    			uiSessionSet(session, "todolisttable", "items", "[" + tableData.toString() + "]");
+    			varSet("$TODOLISTTABLEDATA!", tableData.toString());
+    			
+    			return "ok";
+            }
+        
+        } catch(exception){
+            messageLog("PLUGIN - todolisttable - exception in userCommand " + exception);
+        }
+    }
+    
+    return null;
+}
+
+function pageEvent(address, session, userid, project, page) : {
+    if(project === "todolist" && page === "home"){
+        sessionList.push("[" + session + "]");
+        uiSessionSet(session, "todolisttable", "items", "[" + tableData.toString() + "]");
+		varSet("$TODOLISTTABLEDATA!", tableData.toString());
+    }else{
+        try{
+            if(sessionList.indexOf("[" + session + "]") != -1){
+                sessionList.splice(sessionList.indexOf("[" + session + "]"), 1);
+            }
+        }catch(exception){
+            messageLog("PLUGIN - todolisttable - exception in pageEvent " + exception);
+        }
+    }
+}
+
+function logoutEvent(address, session, userid, lock) : {
+    try{
+        if(sessionList.indexOf("[" + session + "]") != -1){
+            sessionList.splice(sessionList.indexOf("[" + session + "]"), 1);
+        }
+    }catch(exception){
+        messageLog("PLUGIN - todolisttable - exception in logoutEvent " + exception);
+    }
+}
+
+
+
+

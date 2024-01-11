@@ -1,0 +1,16 @@
+<project title="Todolistdatasource2tables" language="en" width="640" height="480" skin="charcoal" version="4.0.0.13b" >
+	<page id="home" title="Homepage" pe-collapsed="false">
+		<table pos="x10y10" width="620" height="370" datamode="datasource" datasourceid="db_todolist1"
+			 columns="[{&quot;dataname&quot;:&quot;id&quot;,&quot;fieldtype&quot;:&quot;none&quot;,&quot;hidden&quot;:&quot;true&quot;,&quot;import&quot;:&quot;false&quot;},{&quot;dataname&quot;:&quot;date&quot;,&quot;format&quot;:&quot;date&quot;,&quot;label&quot;:&quot;YYYY/MM/DD&quot;,&quot;fieldtype&quot;:&quot;date&quot;},{&quot;dataname&quot;:&quot;time&quot;,&quot;format&quot;:&quot;time&quot;,&quot;label&quot;:&quot;HH:MM:SS&quot;,&quot;fieldtype&quot;:&quot;time&quot;},{&quot;dataname&quot;:&quot;info&quot;,&quot;label&quot;:&quot;To Do&quot;,&quot;maxlength&quot;:256},{&quot;type&quot;:&quot;button&quot;,&quot;dataname&quot;:&quot;items&quot;,&quot;dynamic&quot;:&quot;true&quot;,&quot;width&quot;:&quot;40&quot;,&quot;action&quot;:&quot;command&quot;,&quot;commandname&quot;:&quot;showtodolist2&quot;},{&quot;type&quot;:&quot;button&quot;,&quot;width&quot;:&quot;50&quot;,&quot;align&quot;:&quot;center&quot;,&quot;label&quot;:&quot;Edit&quot;,&quot;action&quot;:&quot;edit&quot;,&quot;style&quot;:&quot;clear&quot;,&quot;buttonicon&quot;:&quot;icon:edit&quot;},{&quot;type&quot;:&quot;button&quot;,&quot;width&quot;:&quot;50&quot;,&quot;align&quot;:&quot;center&quot;,&quot;label&quot;:&quot;Delete&quot;,&quot;action&quot;:&quot;delete&quot;,&quot;style&quot;:&quot;clear&quot;,&quot;buttonicon&quot;:&quot;icon:delete&quot;}]"
+			 editmode="true" />
+		<button pos="x270y413" width="100" height="40" style="gr" label="Page 2" action="link" link="page2" />
+		<button pos="x530y413" width="100" height="40" style="gr" label="Clear DB" icon="icon:delete" action="command" name="cleardb"
+			 parameter="cleardb" />
+	</page>
+	<page id="page2" title="Page 2" pe-collapsed="false">
+		<table pos="x10y10" width="620" height="370" datamode="datasource" datasourceid="db_todolist2"
+			 columns="[{&quot;dataname&quot;:&quot;id&quot;,&quot;fieldtype&quot;:&quot;none&quot;,&quot;hidden&quot;:&quot;true&quot;,&quot;import&quot;:&quot;false&quot;},{&quot;dataname&quot;:&quot;id_nested&quot;,&quot;datasource&quot;:&quot;true&quot;,&quot;datasourceid&quot;:&quot;db_todolist1&quot;,&quot;labeldataname&quot;:&quot;info&quot;,&quot;label&quot;:&quot;To Do (Nested)&quot;},{&quot;dataname&quot;:&quot;info&quot;,&quot;label&quot;:&quot;Activity&quot;,&quot;maxlength&quot;:256},{&quot;type&quot;:&quot;button&quot;,&quot;width&quot;:&quot;50&quot;,&quot;align&quot;:&quot;center&quot;,&quot;label&quot;:&quot;Edit&quot;,&quot;action&quot;:&quot;edit&quot;,&quot;style&quot;:&quot;clear&quot;,&quot;buttonicon&quot;:&quot;icon:edit&quot;},{&quot;type&quot;:&quot;button&quot;,&quot;width&quot;:&quot;50&quot;,&quot;align&quot;:&quot;center&quot;,&quot;label&quot;:&quot;Delete&quot;,&quot;action&quot;:&quot;delete&quot;,&quot;style&quot;:&quot;clear&quot;,&quot;buttonicon&quot;:&quot;icon:delete&quot;}]"
+			 editmode="true" />
+		<button pos="x270y416" width="100" height="40" style="gr" label="Home Page" action="link" link="home" />
+	</page>
+</project>

@@ -1,0 +1,7 @@
+<project title="Todolist" language="en" width="640" height="480" skin="charcoal" version="4.0.0.12b" >
+	<page id="home" title="Homepage" pe-collapsed="false">
+		<table id="todolisttable" pos="x10y10" width="620" height="460"
+			 columns="[{&quot;format&quot;:&quot;time&quot;,&quot;label&quot;:&quot;HH:MM&quot;,&quot;required&quot;:&quot;true&quot;},{&quot;format&quot;:&quot;date&quot;,&quot;label&quot;:&quot;AAAA/MM/DD&quot;,&quot;required&quot;:&quot;true&quot;},{&quot;label&quot;:&quot;To Do&quot;,&quot;required&quot;:&quot;true&quot;},{&quot;type&quot;:&quot;button&quot;,&quot;width&quot;:&quot;50&quot;,&quot;align&quot;:&quot;center&quot;,&quot;label&quot;:&quot;Edit&quot;,&quot;action&quot;:&quot;edit&quot;,&quot;style&quot;:&quot;clear&quot;,&quot;buttonicon&quot;:&quot;icon:edit&quot;},{&quot;type&quot;:&quot;button&quot;,&quot;width&quot;:&quot;50&quot;,&quot;align&quot;:&quot;center&quot;,&quot;label&quot;:&quot;Delete&quot;,&quot;action&quot;:&quot;delete&quot;,&quot;style&quot;:&quot;clear&quot;,&quot;buttonicon&quot;:&quot;icon:delete&quot;}]"
+			 editmode="toggle" />
+	</page>
+</project>
